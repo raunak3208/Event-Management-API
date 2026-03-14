@@ -32,9 +32,48 @@ const createEvent=async (req,res)=>{
         })
     }
 }
-
+const getEvents=async (req,res)=>{
+    try {
+        const events=await eventService.getEvents();
+        res.status(200).json({
+            message:"Events fetched successfully",
+            data:events,
+            success:true,
+            err:{}
+        })
+    } catch (error) {
+        console.log("Error in event controller",error);
+        res.status(500).json({
+            message:"Internal server error",
+            err:error,
+            data:{},
+            success:false
+        })
+    }
+}
+const getEvent=async (req,res)=>{
+    try {
+        const {id}=req.params;
+        const event=await eventService.getEvent(id);
+        res.status(200).json({
+            message:"Event fetched successfully",
+            data:event,
+            success:true,
+            err:{}
+        })
+    } catch (error) {
+        console.log("Error in event controller",error);
+        res.status(500).json({
+            message:"Internal server error",
+            err:error,
+            data:{},
+            success:false
+        })
+    }
+}
 export {
     createEvent,
-    
+    getEvents,
+    getEvent
     
 }
