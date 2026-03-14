@@ -71,9 +71,38 @@ const getEvent=async (req,res)=>{
         })
     }
 }
+
+const updateEvent=async (req,res)=>{
+    try {
+        const {id}=req.params;
+        const currentUser=req.user;
+
+        const updatedEvent=await eventService.updateEvent(id,req.body,currentUser);
+        if(!updatedEvent){
+            return res.status(403).json({
+                message: 'Sorry, you are not an organizer and cannot update this event.',
+              });
+        }
+        res.status(200).json({
+            message:"Event updated successfully",
+            data:updatedEvent,
+            success:true,
+            err:{}
+        })
+    } catch (error) {
+        console.log("Error in event controller",error);
+        res.status(500).json({
+            message:"Internal server error",
+            err:error,
+            data:{},
+            success:false
+        })
+    }
+}
 export {
     createEvent,
     getEvents,
-    getEvent
+    getEvent,
+    updateEvent
     
 }
