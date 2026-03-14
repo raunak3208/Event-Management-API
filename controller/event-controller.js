@@ -126,6 +126,29 @@ const deleteEvent=async (req,res)=>{
         })
     }
 }
+
+const registerEvent = async (req, res) => {
+    try {
+      const userId = req.user.id; 
+      const { id: eventId } = req.params;
+      const result = await eventService.registerEvent(eventId, userId);
+      
+      res.status(200).json({
+        message: "Registered successfully", 
+        success: true, 
+        data: result,
+        err:{} 
+    });
+    } catch (error) {
+      console.log("Error in event controller while registering for event",error);
+      res.status(500).json({ 
+        success: false, 
+        message: error.message,
+        data: {},
+        err: error 
+    });
+    }
+};
 export {
     createEvent,
     getEvents,
