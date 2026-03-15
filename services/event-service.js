@@ -102,6 +102,23 @@ class EventService {
         }
     }
 
+    async registerEvent(eventId, userId) {
+        try {
+            const event = await this.eventRepository.getEvent(eventId);
+
+            if (!event) throw new Error("Event not found");
+            if (event.attendees.includes(userId)) throw new Error("User already registered");
+
+            event.attendees.push(userId);
+            await this.eventRepository.save(event);
+            return event;
+        } catch (error) {
+            console.log(
+                "Something went wrong in event registering event in service layer", error);
+            throw error;
+        }
+    }
+
     
 }
 
