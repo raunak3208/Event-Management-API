@@ -75,6 +75,33 @@ class EventService {
             throw error;
         }
     }
+    async deleteEvent(id, currentUser) {
+        try {
+            const event = await this.eventRepository.getEvent(id);
+
+            // Check if event exists
+            if (!event) {
+                throw new Error("Event not found");
+            }
+
+            // Check if the current user is the organizer of the event
+            if (event.organizer._id.toString() !== currentUser.id) {
+                return null;
+                // throw new Error("You must be the organizer of the event to delete it");
+            }
+
+            // Delete the event
+            const deletedEvent = await this.eventRepository.deleteEvent(id);
+            return deletedEvent;
+        } catch (error) {
+            console.log(
+                "Something went wrong in event creation in service layer",
+                error
+            );
+            throw error;
+        }
+    }
+
     
 }
 
