@@ -16,7 +16,22 @@ class UserService {
     }
   }
 
-  
+  async getUser(currentUser, id) {
+    try {
+      console.log('currentUser', currentUser.role);
+      if (!checkUserAccess(currentUser.id, id, currentUser.role)) {
+        throw new Error('Access denied: You can only view your own data or if you are an admin.');
+      }
+
+      const response = await this.userRepository.getUser(id);
+      return response;
+    } catch (error) {
+      console.log('Something went wrong in user-service ', error);
+      throw error;
+    }
+  }
+
+ 
 }
 
 export default UserService;
