@@ -31,7 +31,30 @@ class UserService {
     }
   }
 
- 
+  async getAllUsers(query, page, limit) {
+    try {
+      const skip = (page - 1) * limit;
+
+      const totalUsers = await this.userRepository.countUsers(query);
+
+      const users = await this.userRepository.findAllUsers(query, skip, limit);
+
+      const totalPages = Math.ceil(totalUsers / limit);
+
+      return {
+        users,
+        totalUsers,
+        currentPage: page,
+        totalPages
+      };
+    } catch (error) {
+      console.error("Error in UserService while fetching users:", error);
+      throw error;
+    }
+  }
+
+
+  
 }
 
 export default UserService;
