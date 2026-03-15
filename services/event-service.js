@@ -163,6 +163,27 @@ class EventService {
         }
     }
 
+    async getPopularEvents() {
+        try {
+            const events = await this.eventRepository.getPopularEvents();
+            return events;
+        } catch (error) {
+            console.error("Error in EventService while fetching popular events:", error);
+            throw error;
+
+        }
+    }
+
+    async getEventStats(id) {
+        try {
+            const eventStats = await this.eventRepository.getEventStats(id);
+            return eventStats;
+        } catch (error) {
+            console.error("Error in EventService while fetching event stats:", error);
+            throw error;
+        }
+    }
+
     
 }
 
