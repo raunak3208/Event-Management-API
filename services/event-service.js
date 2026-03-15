@@ -119,6 +119,50 @@ class EventService {
         }
     }
 
+    async cancelRegistration(eventId, userId) {
+        const event = await this.eventRepository.getEvent(eventId);
+        if (!event) throw new Error("Event not found");
+
+        // Convert attendees to strings for comparison
+        const attendees = event.attendees.map((attendee) => attendee._id.toString());
+
+        console.log(attendees);
+        if (!attendees.includes(userId)) {
+            throw new Error("User is not registered");
+        }
+
+        // if (attendees.includes(userId)) {
+        //     throw new Error("User already registered");
+        // }
+        event.attendees = event.attendees.filter(
+            (attendee) => attendee._id.toString() !== userId
+        );
+
+        // Save the updated event
+        await this.eventRepository.save(event);
+
+        return event;
+    }
+
+
+    async getEventAttendees(eventId) {
+        const event = await this.eventRepository.getEvent(eventId);
+
+        if (!event) throw new Error("Event not found");
+
+        return event.attendees;
+    }
+
+    async getEventsWithStats() {
+        try {
+            const events = await this.eventRepository.getAllEventsWithStats();
+            return events;
+        } catch (error) {
+            console.error("Error in EventService while fetching events with stats:", error);
+            throw error;
+        }
+    }
+
     
 }
 
