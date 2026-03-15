@@ -2,151 +2,152 @@ import EventService from "../service/event-service.js";
 import UserService from "../service/user-service.js";
 
 
-const eventService=new EventService();
-const userService=new UserService();
+const eventService = new EventService();
+const userService = new UserService();
 
-const createEvent=async (req,res)=>{
+const createEvent = async (req, res) => {
     try {
-        const userId=req.user.id;
-        const event=await eventService.createEvent(req.body,userId);
+        const userId = req.user.id;
+        const event = await eventService.createEvent(req.body, userId);
+
 
         if (!event) {
             return res.status(403).json({
-              message: 'Sorry, you are not an organizer and cannot create an event.',
+                message: 'Sorry, you are not an organizer and cannot create an event.',
             });
-          }
+        }
 
         res.status(201).json({
-            message:"Event created successfully",
-            data:event,
-            success:true,
-            err:{}
+            message: "Event created successfully",
+            data: event,
+            success: true,
+            err: {}
         })
     } catch (error) {
-        console.log("Error in event controller",error);
+        console.log("Error in event controller", error);
         res.status(500).json({
-            message:"Internal server error",
-            err:error,
-            data:{},
-            success:false
+            message: "Internal server error",
+            err: error,
+            data: {},
+            success: false
         })
     }
 }
-const getEvents=async (req,res)=>{
+const getEvents = async (req, res) => {
     try {
-        const events=await eventService.getEvents();
+        const events = await eventService.getEvents();
         res.status(200).json({
-            message:"Events fetched successfully",
-            data:events,
-            success:true,
-            err:{}
+            message: "Events fetched successfully",
+            data: events,
+            success: true,
+            err: {}
         })
     } catch (error) {
-        console.log("Error in event controller",error);
+        console.log("Error in event controller", error);
         res.status(500).json({
-            message:"Internal server error",
-            err:error,
-            data:{},
-            success:false
+            message: "Internal server error",
+            err: error,
+            data: {},
+            success: false
         })
     }
 }
-const getEvent=async (req,res)=>{
+const getEvent = async (req, res) => {
     try {
-        const {id}=req.params;
-        const event=await eventService.getEvent(id);
+        const { id } = req.params;
+        const event = await eventService.getEvent(id);
         res.status(200).json({
-            message:"Event fetched successfully",
-            data:event,
-            success:true,
-            err:{}
+            message: "Event fetched successfully",
+            data: event,
+            success: true,
+            err: {}
         })
     } catch (error) {
-        console.log("Error in event controller",error);
+        console.log("Error in event controller", error);
         res.status(500).json({
-            message:"Internal server error",
-            err:error,
-            data:{},
-            success:false
+            message: "Internal server error",
+            err: error,
+            data: {},
+            success: false
         })
     }
 }
 
-const updateEvent=async (req,res)=>{
+const updateEvent = async (req, res) => {
     try {
-        const {id}=req.params;
-        const currentUser=req.user;
+        const { id } = req.params;
+        const currentUser = req.user;
 
-        const updatedEvent=await eventService.updateEvent(id,req.body,currentUser);
-        if(!updatedEvent){
+        const updatedEvent = await eventService.updateEvent(id, req.body, currentUser);
+        if (!updatedEvent) {
             return res.status(403).json({
                 message: 'Sorry, you are not an organizer and cannot update this event.',
-              });
+            });
         }
         res.status(200).json({
-            message:"Event updated successfully",
-            data:updatedEvent,
-            success:true,
-            err:{}
+            message: "Event updated successfully",
+            data: updatedEvent,
+            success: true,
+            err: {}
         })
     } catch (error) {
-        console.log("Error in event controller",error);
+        console.log("Error in event controller", error);
         res.status(500).json({
-            message:"Internal server error",
-            err:error,
-            data:{},
-            success:false
+            message: "Internal server error",
+            err: error,
+            data: {},
+            success: false
         })
     }
 }
 
-const deleteEvent=async (req,res)=>{
+const deleteEvent = async (req, res) => {
     try {
-        const {id}=req.params;
-        const currentUser=req.user;
-        const deletedEvent=await eventService.deleteEvent(id,currentUser);
-        if(!deletedEvent){
+        const { id } = req.params;
+        const currentUser = req.user;
+        const deletedEvent = await eventService.deleteEvent(id, currentUser);
+        if (!deletedEvent) {
             return res.status(403).json({
                 message: 'Sorry, you are not an organizer and cannot delete this event.',
-              });
+            });
         }
         res.status(200).json({
-            message:"Event deleted successfully",
-            data:deletedEvent,
-            success:true,
-            err:{}
+            message: "Event deleted successfully",
+            data: deletedEvent,
+            success: true,
+            err: {}
         })
     } catch (error) {
-        console.log("Error in event controller",error);
+        console.log("Error in event controller", error);
         res.status(500).json({
-            message:"Internal server error",
-            err:error,
-            data:{},
-            success:false
+            message: "Internal server error",
+            err: error,
+            data: {},
+            success: false
         })
     }
 }
 
 const registerEvent = async (req, res) => {
     try {
-      const userId = req.user.id; 
-      const { id: eventId } = req.params;
-      const result = await eventService.registerEvent(eventId, userId);
-      
-      res.status(200).json({
-        message: "Registered successfully", 
-        success: true, 
-        data: result,
-        err:{} 
-    });
+        const userId = req.user.id;
+        const { id: eventId } = req.params;
+        const result = await eventService.registerEvent(eventId, userId);
+
+        res.status(200).json({
+            message: "Registered successfully",
+            success: true,
+            data: result,
+            err: {}
+        });
     } catch (error) {
-      console.log("Error in event controller while registering for event",error);
-      res.status(500).json({ 
-        success: false, 
-        message: error.message,
-        data: {},
-        err: error 
-    });
+        console.log("Error in event controller while registering for event", error);
+        res.status(500).json({
+            success: false,
+            message: error.message,
+            data: {},
+            err: error
+        });
     }
 };
 export {
@@ -154,6 +155,8 @@ export {
     getEvents,
     getEvent,
     updateEvent,
-    deleteEvent
-    
+    deleteEvent,
+    registerEvent
 }
+
+
