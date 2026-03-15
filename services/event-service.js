@@ -50,7 +50,32 @@ class EventService {
             throw error;
         }
     }
-   
+    async updateEvent(id, data, currentUser) {
+        try {
+            const event = await this.eventRepository.getEvent(id);
+
+            if (!event) {
+                throw new Error("Event not found");
+            }
+
+            // Check if the current user is the organizer of the event
+            if (event.organizer._id.toString() !== currentUser.id) {
+                return null;
+                // throw new Error(
+                //   "You must be the organizer of the event to make changes"
+                // );
+            }
+            const updatedEvent = await this.eventRepository.updateEvent(id, data);
+            return updatedEvent;
+        } catch (error) {
+            console.log(
+                "Something went wrong in event creation in service layer",
+                error
+            );
+            throw error;
+        }
+    }
+    
 }
 
 export default EventService;
