@@ -184,7 +184,41 @@ class EventService {
         }
     }
 
-    
+    async getActiveUsers() {
+        try {
+            const users = await eventModel.aggregate([
+                { $unwind: "$attendees" }, // Unwind the attendees array
+                {
+                    $group: {
+                        _id: "$attendees", // Group by attendee ID
+                        registrations: { $sum: 1 }, // Count the number of events for each attendee
+                    },
+                },
+                { $sort: { registrations: -1 } }, // Sort in descending order
+                { $limit: 5 }, // Limit to top 5
+            ]);
+
+            // Fetch user details for the active users
+            const populatedUsers = await userModel.find({
+                _id: { $in: users.map((user) => user._id) },
+            });
+
+            // Merge user details with registration counts
+            return users.map((user) => {
+                const userDetails = populatedUsers.find(
+                    (populatedUser) => populatedUser._id.toString() === user._id.toString()
+                );
+                return {
+                    name: userDetails?.name || "Unknown",
+                    email: userDetails?.email || "N/A",
+                    registrations: user.registrations,
+                };
+            });
+        } catch (error) {
+            console.error("Error in EventService while fetching active users:", error);
+            throw error;
+        }
+    }
 }
 
 export default EventService;
