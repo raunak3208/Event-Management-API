@@ -26,7 +26,31 @@ class EventService {
             throw error;
         }
     }
-    
+    async getEvents() {
+        try {
+            const events = await this.eventRepository.getEvents();
+            return events;
+        } catch (error) {
+            console.log(
+                "Something went wrong in event creation in service layer",
+                error
+            );
+            throw error;
+        }
+    }
+    async getEvent(id) {
+        try {
+            const event = await this.eventRepository.getEvent(id);
+            return event;
+        } catch (error) {
+            console.log(
+                "Something went wrong in event creation in service layer",
+                error
+            );
+            throw error;
+        }
+    }
+   
 }
 
 export default EventService;
