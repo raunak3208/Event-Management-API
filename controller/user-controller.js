@@ -46,6 +46,101 @@ const createToken = (id,role) => {
   return jwt.sign({ id:id,role:role }, JWT_SECRET, { expiresIn: '15d' });
 };
 
+const registerUser = async (req, res) => {
+  const { name, email, password,role } = req.body;
+  try {
+    const exists = await userModel.findOne({ email });
 
+    if (exists) {
+      return res.status(200).json({
+        message: 'User already exists',
+        data: exists,
+        success: true,
+      });
+    }
+
+    if (!validator.isEmail(email)) {
+      return res.status(402).json({
+        message: 'Write a valid email',
+        success: false,
+      });
+    }
+
+    //hashing
+    const SALT = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, SALT);
+
+    const newUser = new userModel({
+      name: name,
+      email: email,
+      password: hashedPassword,
+      role:role
+    });
+    console.log(newUser);
+
+    const user = await newUser.save();
+
+    const token = createToken(user._id,user.role);
+    console.log("token",token);
+    res.status(202).json({
+      message: 'Verified token',
+      success: true,
+      token: token,
+      userId: user._id,
+      data: user,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+};
+
+const userService = new UserService();
+
+const updateUser = async (req, res) => {
+  try {
+    const user = await userService.updateUser(req.params.id, req.body);
+    return res.status(202).json({
+      data: user,
+      success: true,
+      err: {},
+      message: 'Successfully updated the user info',
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: 'Internal Server error',
+      success: false,
+      err: error.message,
+      data: {},
+    });
+  }
+};
+
+const getUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userService.getUser(req.user, id);
+    console.log(user);
+    console.log(req.user);
+    return res.status(202).json({
+      data: user,
+      success: true,
+      err: {},
+      message: 'Successfully fetched the user info',
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: 'Internal Server error',
+      success: false,
+      err: error.message,
+      data: {},
+    });
+  }
+};
 
 export { loginUser, registerUser, updateUser, getUser };
